@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Golfboxen Kristiansand</title>
+    
+    <!-- PWA Meta-koder -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#121212">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Golfboxen">
+    <link rel="apple-touch-icon" href="icon-192.png">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #121212;
+            --card-bg: #1e1e1e;
+            --accent-green: #2e7d32;
+            --accent-lime: #8bc34a;
+            --text-main: #ffffff;
+            --text-sub: #b0b0b0;
+            --border-color: #333333;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 430px;
+            background-color: #161616;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            overflow-x: hidden;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 20px;
+            background-color: rgba(18, 18, 18, 0.95);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 1.3rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .logo span { color: var(--accent-lime); }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            color: var(--text-main);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .nav-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 340px;
+            height: 100%;
+            background-color: #1a1a1a;
+            z-index: 100;
+            transition: right 0.3s ease;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-menu.active { right: 0; }
+
+        .menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-main);
+            font-size: 1.8rem;
+            cursor: pointer;
+        }
+
+        .menu-items { list-style: none; }
+        .menu-items li { margin-bottom: 20px; }
+        .menu-items a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 90;
+            display: none;
+        }
+
+        .overlay.active { display: block; }
+
+        .view {
+            display: none;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .view.active { display: flex; }
+
+        .hero {
+            position: relative;
+            height: 180px;
+            border-radius: 12px;
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1535131749006-b7f58c99034b?auto=format&fit=crop&w=800&q=80') center/cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border-color);
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-sub);
+            margin-bottom: 15px;
+        }
+
+        .center-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .badge {
+            background-color: var(--accent-green);
+            color: #fff;
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--accent-lime);
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .option-grid { display: grid; gap: 12px; }
+
+        .option-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+        }
+
+        .option-icon {
+            width: 44px;
+            height: 44px;
+            background-color: rgba(139, 195, 74, 0.1);
+            color: var(--accent-lime);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .arrow-icon { margin-left: auto; color: var(--text-sub); }
+
+        .kiosk-item {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .add-btn {
+            background-color: var(--accent-lime);
+            color: #000;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .cart-box {
+            margin-top: 20px;
+            background: #252525;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .pay-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--accent-lime);
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <header>
+            <div class="logo">Golfboxen <span>KRS</span></div>
+            <button class="menu-btn" id="openMenu"><i class="fa-solid fa-bars"></i></button>
+        </header>
+
+        <div class="overlay" id="overlay"></div>
+
+        <nav class="nav-menu" id="navMenu">
+            <div class="menu-header">
+                <div class="logo">Golfboxen <span>KRS</span></div>
+                <button class="close-btn" id="closeMenu">&times;</button>
+            </div>
+            <ul class="menu-items">
+                <li><a href="#" onclick="showHome()"><i class="fa-solid fa-house"></i> Forside</a></li>
+                <li><a href="#" onclick="openKristiansand()"><i class="fa-solid fa-location-dot"></i> Østre Strandgate</a></li>
+                <li><a href="#" onclick="openKiosk()"><i class="fa-solid fa-store"></i> Kiosk</a></li>
+                <li><a href="#"><i class="fa-solid fa-id-card"></i> Medlemskap</a></li>
+                <li><a href="#"><i class="fa-solid fa-calendar-check"></i> Book simulator</a></li>
+            </ul>
+        </nav>
+
+        <main id="homeView" class="view active">
+            <div class="hero">
+                <h2>Innendørs Golf</h2>
+                <p>Spill golf hele året med TrackMan.</p>
+            </div>
+            <div class="section-title">Velg Senter</div>
+            <div class="center-card" onclick="openKristiansand()">
+                <div>
+                    <h3>Kristiansand</h3>
+                    <p style="color: var(--text-sub); font-size: 0.85rem;">Østre Strandgate</p>
+                </div>
+                <span class="badge">Åpen</span>
+            </div>
+        </main>
+
+        <main id="krsView" class="view">
+            <button class="back-btn" onclick="showHome()"><i class="fa-solid fa-arrow-left"></i> Tilbake til sentere</button>
+            <h2 style="margin-bottom: 15px;">Østre Strandgate</h2>
+
+            <div class="option-grid">
+                <div class="option-card" onclick="openKiosk()">
+                    <div class="option-icon"><i class="fa-solid fa-store"></i></div>
+                    <div>
+                        <h4>Kiosk / Handel</h4>
+                        <p style="color: var(--text-sub); font-size: 0.8rem;">Drikke, kaffe og snacks</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                </div>
+                <div class="option-card" onclick="alert('Åpner AlbaPlay booking...')">
+                    <div class="option-icon"><i class="fa-solid fa-calendar-days"></i></div>
+                    <div>
+                        <h4>Book Simulator</h4>
+                        <p style="color: var(--text-sub); font-size: 0.8rem;">Åpner AlbaPlay booking</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                </div>
+            </div>
+        </main>
+
+        <main id="kioskView" class="view">
+            <button class="back-btn" onclick="openKristiansand()"><i class="fa-solid fa-arrow-left"></i> Tilbake til Kristiansand</button>
+            <h2 style="margin-bottom: 15px;"><i class="fa-solid fa-store" style="color: var(--accent-lime);"></i> Golfboxen Kiosk</h2>
+
+            <div class="kiosk-item">
+                <div><h4>Mineralvann</h4><p style="color: var(--text-sub); font-size: 0.85rem;">20 kr</p></div>
+                <button class="add-btn" onclick="addToCart('Mineralvann', 20)">+ Legg til</button>
+            </div>
+            <div class="kiosk-item">
+                <div><h4>Kaffe</h4><p style="color: var(--text-sub); font-size: 0.85rem;">15 kr</p></div>
+                <button class="add-btn" onclick="addToCart('Kaffe', 15)">+ Legg til</button>
+            </div>
+            <div class="kiosk-item">
+                <div><h4>Energibar</h4><p style="color: var(--text-sub); font-size: 0.85rem;">15 kr</p></div>
+                <button class="add-btn" onclick="addToCart('Energibar', 15)">+ Legg til</button>
+            </div>
+            <div class="kiosk-item">
+                <div><h4>Alkoholfri Øl</h4><p style="color: var(--text-sub); font-size: 0.85rem;">25 kr</p></div>
+                <button class="add-btn" onclick="addToCart('Alkoholfri Øl', 25)">+ Legg til</button>
+            </div>
+
+            <div class="cart-box">
+                <h4>Handlekurv</h4>
+                <div id="cartItems" style="margin: 10px 0; font-size: 0.9rem; color: var(--text-sub);">Ingen varer lagt til</div>
+                <p style="font-weight: 700;">Totalt: <span id="cartTotal">0</span> kr</p>
+                <button class="pay-btn" onclick="pay()"><i class="fa-solid fa-mobile-screen"></i> Betal med Vipps / Kort</button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Registrer Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('PWA Service Worker registrert!'))
+                .catch(err => console.log('Feil ved PWA-registrering:', err));
+        }
+
+        // Navigasjon
+        const openMenuBtn = document.getElementById('openMenu');
+        const closeMenuBtn = document.getElementById('closeMenu');
+        const navMenu = document.getElementById('navMenu');
+        const overlay = document.getElementById('overlay');
+
+        function toggleMenu() {
+            navMenu.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        openMenuBtn.addEventListener('click', toggleMenu);
+        closeMenuBtn.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+
+        function hideAllViews() {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        }
+
+        function showHome() { hideAllViews(); document.getElementById('homeView').classList.add('active'); if(navMenu.classList.contains('active')) toggleMenu(); }
+        function openKristiansand() { hideAllViews(); document.getElementById('krsView').classList.add('active'); if(navMenu.classList.contains('active')) toggleMenu(); }
+        function openKiosk() { hideAllViews(); document.getElementById('kioskView').classList.add('active'); if(navMenu.classList.contains('active')) toggleMenu(); }
+
+        // Kiosk logic
+        let cart = [];
+        let total = 0;
+
+        function addToCart(item, price) {
+            cart.push({item, price});
+            total += price;
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const cartItemsDiv = document.getElementById('cartItems');
+            if(cart.length === 0) {
+                cartItemsDiv.innerHTML = "Ingen varer lagt til";
+            } else {
+                cartItemsDiv.innerHTML = cart.map(c => `<div>- ${c.item} (${c.price} kr)</div>`).join('');
+            }
+            document.getElementById('cartTotal').innerText = total;
+        }
+
+        function pay() {
+            if(total === 0) { alert("Handlekurven er tom!"); return; }
+            alert(`Sendes til Vipps/Betaling for ${total} kr...`);
+            cart = []; total = 0; updateCartUI();
+        }
+    </script>
+</body>
+</html>
